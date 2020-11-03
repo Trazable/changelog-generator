@@ -37,7 +37,7 @@ const {
  */
 
 
-;(async () => {
+const ChangelogGenerator = async () => {
   try {
     // Load the module configuration
     const config = await readConfig()
@@ -95,4 +95,6 @@ const {
   } catch (error) {
     console.error(error)
   }
-})()
+}
+
+module.exports = ChangelogGenerator
