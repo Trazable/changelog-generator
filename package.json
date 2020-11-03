@@ -1,0 +1,24 @@
+{
+  "name": "changelog-generator",
+  "version": "1.0.0",
+  "description": "Generate a changelog from git metadata",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Trazable/changelog-generator.git"
+  },
+  "keywords": [
+    "changelog",
+    "trazable",
+    "semver"
+  ],
+  "author": "Trazable",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Trazable/changelog-generator/issues"
+  },
+  "homepage": "https://github.com/Trazable/changelog-generator#readme"
+}
