@@ -68,4 +68,6 @@ ${bugfixs
       } ${subject} ([${hash}](${repoUrl}/commit/${hash}))  \n`
   )
   .join('')}
+
+___
 `
