@@ -1,11 +1,15 @@
 {
-  "name": "changelog-generator",
+  "name": "@trazable/changelog-generator",
   "version": "1.0.0",
-  "description": "Generate a changelog from git metadata",
-  "main": "index.js",
+  "description": "Custom trazable changelog generator based on conventional-commits",
+  "main": "./src/index.js",
+  "bin": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/eslint --max-warnings=0  .",
+    "test:fix": "./node_modules/.bin/eslint --max-warnings=0  --fix .",
+    "start": "node ."
   },
+  "files": [],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Trazable/changelog-generator.git"
@@ -20,5 +24,20 @@
   "bugs": {
     "url": "https://github.com/Trazable/changelog-generator/issues"
   },
-  "homepage": "https://github.com/Trazable/changelog-generator#readme"
+  "homepage": "https://github.com/Trazable/changelog-generator#readme",
+  "dependencies": {
+    "conventional-changelog-writer": "^4.0.17",
+    "conventional-commits-parser": "^3.1.0",
+    "git-raw-commits": "^2.0.7",
+    "read-pkg": "^5.2.0",
+    "semver": "^7.3.2"
+  },
+  "devDependencies": {
+    "@trazable/eslint-config": "^1.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@trazable/eslint-config"
+    ]
+  }
 }
