@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+const ChangelogGenerator = require('../src/index.js')
+
+;(async () => {
+  ChangelogGenerator()
+})()
