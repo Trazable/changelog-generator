@@ -1,0 +1,24 @@
+################################################
+#   ┌─┐┬┌┬┐╦╔═╗╔╗╔╔═╗╦═╗╔═╗
+#   │ ┬│ │ ║║ ╦║║║║ ║╠╦╝║╣
+#  o└─┘┴ ┴ ╩╚═╝╝╚╝╚═╝╩╚═╚═╝
+#
+# > Files to exclude from the app's repo.
+#
+# It exists to signify to git that certain files
+# and/or directories should be ignored for the
+# purposes of version control.
+#
+# This keeps tmp files and sensitive credentials
+# from being uploaded to the repository and prevent
+# accidentally committing setting.
+#
+################################################
+
+
+
+################################################
+# Dependencies
+################################################
+
+node_modules/
