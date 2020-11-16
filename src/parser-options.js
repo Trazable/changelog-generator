@@ -8,12 +8,7 @@ const conventionalCommitsParser = require('conventional-commits-parser') // esli
 module.exports = {
   headerPattern: /^(.{7}).?(\w*)(?:\((.*)\))?!?: (.*)$/,
   breakingHeaderPattern: /^(.{7}).?(\w*)(?:\((.*)\))?!: (.*)$/,
-  headerCorrespondence: [
-    'hash',
-    'type',
-    'scope',
-    'subject',
-  ],
+  headerCorrespondence: ['hash', 'type', 'scope', 'subject'],
   noteKeywords: ['BREAKING CHANGE'],
   revertPattern: /^(?:revert|revert:)\s"?([\S\s]+?)"?\s*this reverts commit (\w*)\./i,
   revertCorrespondence: ['header', 'hash'],
