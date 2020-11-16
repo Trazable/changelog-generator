@@ -24,7 +24,7 @@ To use the generator module you must follow the next steps:
   ```
 
 - Step 3:
-  - Before run the script you must be in branch `release/*` or `hotfix/*`
+  - Only generate the Changelog when you are in branch `release/*` or `hotfix/*` otherwise a preview is printed
 
 - Step 4:
-  - Remember run this script only before close the branch
+  - Remember run this script before close the branch

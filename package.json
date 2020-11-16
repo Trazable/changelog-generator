@@ -1,6 +1,6 @@
 {
   "name": "@trazable/changelog-generator",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Custom trazable changelog generator based on conventional-commits",
   "main": "./src/index.js",
   "bin": "./bin/changelog-generator",
