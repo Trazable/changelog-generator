@@ -2,6 +2,7 @@ const { promisify } = require('util')
 const { exec } = require('child_process')
 const semver = require('semver')
 const conventionalCommitsParser = require('conventional-commits-parser')
+const path = require('path')
 const parserOptions = require('./parser-options')
 const gitRawCommits = require('git-raw-commits')
 const execAsync = promisify(exec)
@@ -203,4 +204,42 @@ exports.writeChangelog = async (changelogPath, template, changelog) => {
     // Createe the file and write the new changelog info
     await writeFile(changelogPath, template(changelog))
   }
+}
+
+/**
+ * Update the version specified in package and package-lock
+ *
+ * @param {string} version
+ * @returns {Promise<void>}
+ */
+exports.updatePackageVersion = async (version) => {
+  const cwd = process.cwd()
+  const packagePath = path.resolve(cwd, 'package.json')
+  const packageLockPath = path.resolve(cwd, 'package-lock.json')
+
+  const package_ = await readFile(packagePath, 'utf-8')
+  const packageLock = await readFile(packageLockPath, 'utf-8')
+
+  await writeFile(
+    packagePath,
+    `${JSON.stringify(
+      {
+        ...JSON.parse(package_),
+        version,
+      },
+      undefined,
+      2
+    )}\n`
+  )
+  await writeFile(
+    packageLockPath,
+    `${JSON.stringify(
+      {
+        ...JSON.parse(packageLock),
+        version,
+      },
+      undefined,
+      2
+    )}\n`
+  )
 }
