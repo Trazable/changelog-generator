@@ -8,6 +8,7 @@ const {
   getNextVersion,
   getAllCommits,
   writeChangelog,
+  updatePackageVersion,
 } = require('./utils')
 
 /**
@@ -86,6 +87,8 @@ const ChangelogGenerator = async () => {
 
     // Update the changelog file
     await writeChangelog(config.changelogPath, config.template, changelog)
+    // Update the version in package and package-lock
+    await updatePackageVersion(nextVersionTag)
   } catch (error) {
     console.error(error)
   }
