@@ -69,6 +69,17 @@ exports.isBranchDevelop = (branchName) => {
 }
 
 /**
+ * @name checkIsPatch
+ * @description check if the commit do a Patch version change
+ *
+ * @param {Commit} commit
+ * @returns {boolean}
+ */
+exports.checkIsPatch = ({ type }) => {
+  return type && type === 'fix'
+}
+
+/**
  * @name checkIsMinor
  * @description check if the commit do a minor version change
  *
@@ -76,7 +87,7 @@ exports.isBranchDevelop = (branchName) => {
  * @returns {boolean}
  */
 exports.checkIsMinor = ({ type }) => {
-  return type === 'feat'
+  return type && type === 'feat'
 }
 
 /**
@@ -88,8 +99,9 @@ exports.checkIsMinor = ({ type }) => {
  */
 exports.checkIsMayor = ({ type, body }) => {
   return (
-    type.includes('!') ||
-    body.some((bodyLine) => bodyLine.includes('BREAKING_CHANGE'))
+    (type && type.includes('!')) ||
+    (body &&
+      body.split('\n').some((bodyLine) => bodyLine.includes('BREAKING_CHANGE')))
   )
 }
 
@@ -98,47 +110,29 @@ exports.checkIsMayor = ({ type, body }) => {
  * @description knowing the latest tag read all commits since tag to know the next version following the semver standard
  *
  * @param {string} lastTag
+ * @param {string} currentBranch
  * @returns {Promise<string>}
  */
-exports.getNextVersion = async (lastTag) => {
-  /**
-   * @type {semver.ReleaseType}
-   */
-  let releaseType = 'patch'
-
-  /**
-   * @param {Commit} commit
-   */
-  const commitCheck = (commit) => {
-    try {
-      if (
-        releaseType === 'minor' &&
-        ((commit.type && commit.type.includes('!')) ||
-          (commit.body &&
-            commit.body
-              .split('\n')
-              .some((bodyLine) => bodyLine.includes('BREAKING_CHANGE'))))
-      ) {
-        releaseType = 'major'
-      } else if (
-        releaseType === 'patch' &&
-        commit.type &&
-        commit.type === 'feat'
-      ) {
-        releaseType = 'minor'
-      }
-    } catch (error) {
-      commits.emit('error', error)
-    }
-  }
-
-  const currentBranch = await this.getCurrentBranch()
-
+exports.getNextVersion = async (lastTag, currentBranch) => {
   const commits = await this.getAllCommits(lastTag, currentBranch)
 
-  commits.forEach((commit) => commitCheck(commit))
+  if (this.isBranchHotfix(currentBranch)) {
+    // If the current branch is a hotfix increment a path version
+    return commits.some((commit) => this.checkIsPatch(commit))
+      ? semver.inc(lastTag, 'patch')
+      : lastTag
+  } else if (
+    this.isBranchDevelop(currentBranch) ||
+    this.isBranchRelease(currentBranch)
+  ) {
+    // If the current branch is a Release or Develop without commits don't increment version
+    if (commits.length === 0) return lastTag
 
-  return semver.inc(lastTag, releaseType)
+    // If the current branch is a Release or Develop with commits check commits but increment a minor by default
+    return commits.some((commit) => this.checkIsMayor(commit))
+      ? semver.inc(lastTag, 'major')
+      : semver.inc(lastTag, 'minor')
+  }
 }
 
 /**
@@ -171,21 +165,23 @@ exports.getAllCommits = async (from, to) => {
       .on('error', reject)
       .once('end', () =>
         resolve(
-          commits.map((commit) => {
-            if (
-              commit.header &&
-              commit.header.includes("Merge branch 'feature/")
-            ) {
-              commit.hash = commit.header.slice(0, 7)
-              commit.type = 'merge'
-              commit.subject = commit.header.slice(
-                22,
-                commit.header.indexOf("' into develop")
-              )
-            }
+          commits
+            .map((commit) => {
+              if (
+                commit.header &&
+                commit.header.includes("Merge branch 'feature/")
+              ) {
+                commit.hash = commit.header.slice(0, 7)
+                commit.type = 'merge'
+                commit.subject = commit.header.slice(
+                  22,
+                  commit.header.indexOf("' into develop")
+                )
+              }
 
-            return commit
-          })
+              return commit
+            })
+            .filter(({ type }) => type !== null)
         )
       )
       .resume()

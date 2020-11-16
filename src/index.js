@@ -59,7 +59,7 @@ const ChangelogGenerator = async () => {
     const commitsRelease = await getAllCommits('develop', currentBranch)
 
     // Get the next version tag to use depending the commits since the last tag
-    const nextVersionTag = await getNextVersion(lastTag)
+    const nextVersionTag = await getNextVersion(lastTag, currentBranch)
     console.log('Next version tag :>>', nextVersionTag)
 
     /**
