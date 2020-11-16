@@ -58,6 +58,17 @@ exports.isBranchHotfix = (branchName) => {
 }
 
 /**
+ * @name isBranchDevelop
+ * @description check if the branch name is a develop branch
+ *
+ * @param {string} branchName
+ * @returns {boolean}
+ */
+exports.isBranchDevelop = (branchName) => {
+  return branchName === 'develop'
+}
+
+/**
  * @name checkIsMinor
  * @description check if the commit do a minor version change
  *

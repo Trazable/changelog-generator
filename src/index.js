@@ -3,6 +3,7 @@ const readConfig = require('./read-config')
 const {
   getCurrentBranch,
   getLastTag,
+  isBranchDevelop,
   isBranchRelease,
   isBranchHotfix,
   getNextVersion,
@@ -41,11 +42,15 @@ const ChangelogGenerator = async () => {
 
     // Get current branch
     const currentBranch = await getCurrentBranch()
-    console.log('currentBranch :>>', currentBranch)
+    console.log('Current branch :>>', currentBranch)
+
+    if (!isBranchRelease(currentBranch) && !isBranchHotfix(currentBranch) && !isBranchDevelop(currentBranch)) {
+      throw new Error('You must be in release, hotfix or develop branch to run the changelog generator')
+    }
 
     // Get the latest tag generated
     const lastTag = await getLastTag()
-    console.log('lastTag :>>', lastTag)
+    console.log('Last tag :>>', lastTag)
 
     // Get all commits from the latest tag to the current branch through develop
     const commitsAll = await getAllCommits(lastTag, currentBranch)
@@ -55,7 +60,7 @@ const ChangelogGenerator = async () => {
 
     // Get the next version tag to use depending the commits since the last tag
     const nextVersionTag = await getNextVersion(lastTag)
-    console.log('nextVersionTag :>>', nextVersionTag)
+    console.log('Next version tag :>>', nextVersionTag)
 
     /**
      * @type {Changelog}
@@ -81,18 +86,21 @@ const ChangelogGenerator = async () => {
       ),
     }
 
-
-    // This generation only works if the current branch is a release or hotfix otherwise only show a preview
-    if (!isBranchRelease(currentBranch) && !isBranchHotfix(currentBranch)) {
+    // This generation only works if the current branch is a release or hotfix
+    if (isBranchRelease(currentBranch) || isBranchHotfix(currentBranch)) {
       // Update the changelog file
-      await writeChangelog(config.changelogPath, config.changelogTemplate, changelog)
+      await writeChangelog(
+        config.changelogPath,
+        config.changelogTemplate,
+        changelog
+      )
       // Update the version in package and package-lock
       await updatePackageVersion(nextVersionTag)
       // Commit the bump version
       console.log('Commiting...')
       await commitBump(nextVersionTag)
-    } else {
-      console.log(config.previewTemplate(changelog))
+    } else if (isBranchDevelop(currentBranch)) { // In develop branch only show a preview
+      console.log(config.previewTemplate(commitsAll))
     }
   } catch (error) {
     console.error(error)

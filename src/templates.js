@@ -75,29 +75,15 @@ ___
 
 /**
  *
- * @param {Changelog} changelog
+ * @param {Commit[]} commits
  */
-exports.previewTemplate = ({ merges, features, bugfixs }) => `
-
-### Features Merged
-${merges.map(({ subject, hash }) => `${subject} (${hash})`).join('\n')}
-
-
-### Features
-${features
+exports.previewTemplate = (commits) => `
+Commits :>>
+${commits
   .map(
-    ({ scope, subject, hash }) =>
-      `${scope ? `${scope} -> ` : ''}${subject} (${hash})`
+    ({ type, scope, subject, hash }) =>
+      `${type}${scope ? `(${scope})` : ''}: ${subject} (${hash})`
   )
   .join('\n')}
-
-
-### Bug Fixes
-${bugfixs
-  .map(
-    ({ scope, subject, hash }) =>
-      `${scope ? `${scope} -> ` : ''}${subject} (${hash})`
-  )
-  .join('\n')}
-
 `
+
