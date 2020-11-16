@@ -9,6 +9,7 @@ const {
   getAllCommits,
   writeChangelog,
   updatePackageVersion,
+  commitBump,
 } = require('./utils')
 
 /**
@@ -44,7 +45,7 @@ const ChangelogGenerator = async () => {
 
     // This script only works if the current branch is a release or hotfix
     if (!isBranchRelease(currentBranch) && !isBranchHotfix(currentBranch)) {
-      throw new Error('You must be in release or hotfix branch to run the changelog generator')
+      // throw new Error('You must be in release or hotfix branch to run the changelog generator')
     }
 
     // Get the latest tag generated
@@ -89,6 +90,8 @@ const ChangelogGenerator = async () => {
     await writeChangelog(config.changelogPath, config.template, changelog)
     // Update the version in package and package-lock
     await updatePackageVersion(nextVersionTag)
+    // Commit the bump version
+    await commitBump(nextVersionTag)
   } catch (error) {
     console.error(error)
   }
