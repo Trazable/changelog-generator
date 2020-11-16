@@ -18,13 +18,14 @@
  * @property {string} date
  * @property {Commit[]} merges
  * @property {Commit[]} bugfixs
+ * @property {Commit[]} features
  */
 
 /**
  *
  * @param {Changelog} changelog
  */
-module.exports = ({
+exports.changelogTemplate = ({
   header,
   repoUrl,
   version,
@@ -70,4 +71,33 @@ ${bugfixs
   .join('')}
 
 ___
+`
+
+/**
+ *
+ * @param {Changelog} changelog
+ */
+exports.previewTemplate = ({ merges, features, bugfixs }) => `
+
+### Features Merged
+${merges.map(({ subject, hash }) => `${subject} (${hash})`).join('\n')}
+
+
+### Features
+${features
+  .map(
+    ({ scope, subject, hash }) =>
+      `${scope ? `${scope} -> ` : ''}${subject} (${hash})`
+  )
+  .join('\n')}
+
+
+### Bug Fixes
+${bugfixs
+  .map(
+    ({ scope, subject, hash }) =>
+      `${scope ? `${scope} -> ` : ''}${subject} (${hash})`
+  )
+  .join('\n')}
+
 `
