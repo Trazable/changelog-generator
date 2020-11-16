@@ -73,7 +73,7 @@ const ChangelogGenerator = async () => {
       merges: commitsAll.filter(
         (commit) => commit.type && commit.type === 'merge'
       ),
-      features: [],
+      features: commitsAll.filter((commit) => commit.type && commit.type === 'feat'),
       release: commitsRelease,
       bugfixs: [
         ...commitsAll.filter((commit) => commit.type && commit.type === 'fix'),
