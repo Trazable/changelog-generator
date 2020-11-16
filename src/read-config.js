@@ -1,6 +1,6 @@
 const path = require('path')
 const readPkg = require('read-pkg')
-const defaultTemplate = require('./template')
+const { changelogTemplate, previewTemplate } = require('./templates')
 
 /**
  * @typedef Changelog
@@ -19,7 +19,8 @@ const defaultTemplate = require('./template')
  * @property {string} changelogPath path where is the changelog file to fill
  * @property {string} repoUrl
  * @property {string} changelogHeader
- * @property {Changelog => string} template
+ * @property {(changelog: Changelog) => string} changelogTemplate
+ * @property {(changelog: Changelog) => string} previewTemplate
  */
 
 /**
@@ -34,6 +35,7 @@ module.exports = async () => {
     changelogPath: path.resolve(process.cwd(), './CHANGELOG.md'),
     repoUrl: packageJson.repository.url,
     changelogHeader: '',
-    template: defaultTemplate,
+    changelogTemplate,
+    previewTemplate,
   }
 }
