@@ -1,9 +1,4 @@
 /* eslint-disable no-console */
-const { readFile, writeFile, appendFile } = require('fs')
-const { promisify } = require('util')
-const readFileAsync = promisify(readFile)
-const writeFileAsync = promisify(writeFile)
-const appendFileAsync = promisify(appendFile)
 const readConfig = require('./read-config')
 const {
   getCurrentBranch,
@@ -12,6 +7,7 @@ const {
   isBranchHotfix,
   getNextVersion,
   getAllCommits,
+  writeChangelog,
 } = require('./utils')
 
 /**
@@ -35,7 +31,6 @@ const {
  * @property {Commit[]} merges
  * @property {Commit[]} bugfixs
  */
-
 
 const ChangelogGenerator = async () => {
   try {
@@ -83,15 +78,14 @@ const ChangelogGenerator = async () => {
         ...commitsRelease.filter(
           (commit) => commit.type && commit.type === 'fix'
         ),
-      ].filter((commit, index, self) => index === self.findIndex(c => c.hash === commit.hash)),
+      ].filter(
+        (commit, index, self) =>
+          index === self.findIndex((c) => c.hash === commit.hash)
+      ),
     }
 
-    // Read the current changelog content
-    const currectContent = await readFileAsync(config.changelogPath)
-
-    // Write the new  changelog info and append the old content
-    await writeFileAsync(config.changelogPath, config.template(changelog))
-    await appendFileAsync(config.changelogPath, currectContent)
+    // Update the changelog file
+    await writeChangelog(config.changelogPath, config.template, changelog)
   } catch (error) {
     console.error(error)
   }

@@ -1,11 +1,14 @@
 const { promisify } = require('util')
 const { exec } = require('child_process')
 const semver = require('semver')
-const { Readable } = require('stream') // eslint-disable-line no-unused-vars
 const conventionalCommitsParser = require('conventional-commits-parser')
 const parserOptions = require('./parser-options')
 const gitRawCommits = require('git-raw-commits')
 const execAsync = promisify(exec)
+const { readFile, writeFile, appendFile, access } = require('fs/promises')
+const {
+  constants: { F_OK },
+} = require('fs')
 
 /**
  * @typedef Commit
@@ -126,7 +129,6 @@ exports.getNextVersion = async (lastTag) => {
   return semver.inc(lastTag, releaseType)
 }
 
-
 /**
  * @name getLastTag
  * @description Get the latest git tag created
@@ -176,4 +178,29 @@ exports.getAllCommits = async (from, to) => {
       )
       .resume()
   })
+}
+
+/**
+ * Write the new Changelog info
+ *
+ * @param {string} changelogPath
+ * @param {() => string} template
+ * @param {import('./template').Changelog} changelog
+ * @returns {Promise<void>}
+ */
+exports.writeChangelog = async (changelogPath, template, changelog) => {
+  try {
+    // Check if the changelog exist
+    await access(changelogPath, F_OK)
+
+    // Read the current changelog content
+    const currectContent = await readFile(changelogPath)
+
+    // Write the new changelog info and append the old content
+    await writeFile(changelogPath, template(changelog))
+    await appendFile(changelogPath, currectContent)
+  } catch {
+    // Createe the file and write the new changelog info
+    await writeFile(changelogPath, template(changelog))
+  }
 }

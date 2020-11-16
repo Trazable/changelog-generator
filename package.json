@@ -9,7 +9,10 @@
     "test:fix": "./node_modules/.bin/eslint --max-warnings=0  --fix .",
     "start": "node ."
   },
-  "files": ["src", "bin"],
+  "files": [
+    "src",
+    "bin"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Trazable/changelog-generator.git"
@@ -33,7 +36,7 @@
     "semver": "^7.3.2"
   },
   "devDependencies": {
-    "@trazable/eslint-config": "^1.0.0"
+    "@trazable/eslint-config": "^2.0.0"
   },
   "eslintConfig": {
     "extends": [

@@ -1,4 +1,4 @@
-const { resolve } = require('path')
+const path = require('path')
 const readPkg = require('read-pkg')
 const defaultTemplate = require('./template')
 
@@ -31,7 +31,7 @@ module.exports = async () => {
   const packageJson = await readPkg()
 
   return {
-    changelogPath: resolve(process.cwd(), './CHANGELOG.md'),
+    changelogPath: path.resolve(process.cwd(), './CHANGELOG.md'),
     repoUrl: packageJson.repository.url,
     changelogHeader: '',
     template: defaultTemplate,
