@@ -243,3 +243,21 @@ exports.updatePackageVersion = async (version) => {
     )}\n`
   )
 }
+
+/**
+ * Commit the CHANGELOG and package to commit the bump version
+ *
+ * @param {string} version
+ * @returns {Promise<void>}
+ */
+exports.commitBump = async (version) => {
+  // Add changes to git index
+  await execAsync(
+    'git add -A CHANGELOG.md package.json package-lock.json'
+  )
+
+  // Commit with a bump messaage
+  await execAsync(
+    `git commit -m "chore(release): bump version to ${version}"`
+  )
+}
